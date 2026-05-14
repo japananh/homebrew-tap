@@ -3,20 +3,20 @@ cask "aimonitor" do
   depends_on macos: ">= :sonoma"
   app "AIMonitor.app"
 
-  version "1.0.0-beta.2"
+  version "1.0.0-beta.3"
 
   on_macos do
-    sha256 "d148e599338f1d8b27e631d5606139df88062a5137a742d0b7880a7071dca878"
+    sha256 "7d89c1637c1e1dc69d245a41d58bdbf1445b2f42321d52ebfc925ab017f63961"
     url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_darwin_universal.tar.gz"
   end
 
   on_linux do
     on_intel do
-      sha256 "99c6a669dd166b231bc85d9f3318667ec58c57c79cd65d896c39e78d61661347"
+      sha256 "71f6f3a6c9d939806992518b49e8098b3dea087017ee17cde9a53b5ec12808cc"
       url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_linux_amd64.tar.gz"
     end
     on_arm do
-      sha256 "fb45c7a31cd4e191ffd38c33f0d99a3046e6ae8c286ad80fd34f5402d449cd21"
+      sha256 "0786220dafe6103fc99248ac41d799189c2b131135d839f68001750771e50563"
       url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_linux_arm64.tar.gz"
     end
   end
