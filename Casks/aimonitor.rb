@@ -3,20 +3,20 @@ cask "aimonitor" do
   depends_on macos: ">= :sonoma"
   app "AIMonitor.app"
 
-  version "1.0.0-beta.3"
+  version "1.0.0-beta.4"
 
   on_macos do
-    sha256 "ebf9d4a76fb1accd3f56f53ee0b9d30ea41141c34898f6c89d26762c7263993a"
+    sha256 "9c0aa3a047b440d49770f288c5bc94f182eee1f2b1ae0e75c62bb64c5e6a2fde"
     url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_darwin_universal.tar.gz"
   end
 
   on_linux do
     on_intel do
-      sha256 "febc0d3e4ce018093f6457d3ec26ec716e85a3e76bc9e759f30bab0e2e6534a4"
+      sha256 "a467c83d5b38d5893d942a1c265f63b991d9280a4fa416c7fda62f656ad65e7c"
       url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_linux_amd64.tar.gz"
     end
     on_arm do
-      sha256 "9f45f4829377e312225f9189c649e34fcc5bb8a20893785fd4ec8ff830fd74a8"
+      sha256 "75d36c38984093e66be152eb427c172db0b647a343e2e7a101330c56162e4065"
       url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_linux_arm64.tar.gz"
     end
   end
@@ -31,7 +31,24 @@ cask "aimonitor" do
 
   binary "aimonitor"
 
-  # No zap stanza required
+  uninstall launchctl: [
+      "dev.aimonitor.daemon",
+    ],
+    quit: [
+      "dev.aimonitor.AIMonitor",
+    ],
+    login_item: [
+      "dev.aimonitor.AIMonitor",
+    ]
+
+  zap trash: [
+      "~/Library/LaunchAgents/dev.aimonitor.daemon.plist",
+      "~/Library/Application Support/aimonitor",
+      "~/Library/Logs/aimonitor",
+      "~/Library/Caches/aimonitor",
+      "~/Library/Preferences/dev.aimonitor.AIMonitor.plist",
+      "~/.config/aimonitor",
+    ]
 
   caveats <<~EOS
     aimonitor is unsigned in this beta. macOS Gatekeeper will refuse
@@ -41,5 +58,10 @@ cask "aimonitor" do
 
     Then start the menu bar widget from /Applications, or run
     `aimonitor daemon run` to start the headless watcher.
+
+    To uninstall cleanly (drop the SQLite DB + aimonitor-namespaced
+    Keychain entries too), run this BEFORE `brew uninstall --cask`:
+
+      aimonitor uninstall --purge
   EOS
 end
