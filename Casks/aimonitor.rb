@@ -2,21 +2,26 @@
 cask "aimonitor" do
   depends_on macos: ">= :sonoma"
   app "AIMonitor.app"
+  postflight do
+    system_command "#{staged_path}/aimonitor",
+                   args: ["config", "set", "autostart", "true"],
+                   must_succeed: false
+  end
 
-  version "1.0.0-beta.4"
+  version "1.0.0-beta.5"
 
   on_macos do
-    sha256 "9c0aa3a047b440d49770f288c5bc94f182eee1f2b1ae0e75c62bb64c5e6a2fde"
+    sha256 "4094336f420a74257ef78ca463639287d76c619c27fe4780fc7202df5fb0c70f"
     url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_darwin_universal.tar.gz"
   end
 
   on_linux do
     on_intel do
-      sha256 "a467c83d5b38d5893d942a1c265f63b991d9280a4fa416c7fda62f656ad65e7c"
+      sha256 "26c65dad3d607343f9f118497282bf6ef24456a99674b8806f68c57095c22abe"
       url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_linux_amd64.tar.gz"
     end
     on_arm do
-      sha256 "75d36c38984093e66be152eb427c172db0b647a343e2e7a101330c56162e4065"
+      sha256 "232fa3b55a380bec7c4963455500ea67cf09761332a4a35345a0586eb11044a8"
       url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_linux_arm64.tar.gz"
     end
   end
@@ -48,19 +53,23 @@ cask "aimonitor" do
       "~/Library/Caches/aimonitor",
       "~/Library/Preferences/dev.aimonitor.AIMonitor.plist",
       "~/.config/aimonitor",
+      "~/.aimonitor",
+      "~/.aimonitor-lock",
     ]
 
   caveats <<~EOS
-    aimonitor is unsigned in this beta. macOS Gatekeeper will refuse
-    the first launch. Fix it once with:
+    The aimonitor daemon is registered to start at login during install,
+    so the menu bar shows live data right away. Opt out any time with:
+
+      aimonitor config set autostart false
+
+    The menu bar app is unsigned in this beta — macOS Gatekeeper blocks
+    the first GUI launch. Clear it once:
 
       xattr -dr com.apple.quarantine /Applications/AIMonitor.app
 
-    Then start the menu bar widget from /Applications, or run
-    `aimonitor daemon run` to start the headless watcher.
-
-    To uninstall cleanly (drop the SQLite DB + aimonitor-namespaced
-    Keychain entries too), run this BEFORE `brew uninstall --cask`:
+    For COMPLETE removal — including saved logins in your Keychain, the
+    database, and config — run this BEFORE `brew uninstall`:
 
       aimonitor uninstall --purge
   EOS
