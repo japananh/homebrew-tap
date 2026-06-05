@@ -8,20 +8,20 @@ cask "aimonitor" do
                    must_succeed: false
   end
 
-  version "1.1.0-beta.1"
+  version "1.1.0-beta.2"
 
   on_macos do
-    sha256 "e998740bda13e53e0749ef578fa2b567ec1126d87052499de9ea828c6d4379a8"
+    sha256 "ed71c547efde49d7d54616b254602195e45723d51f9478390aa3b6e6dd762b16"
     url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_darwin_universal.tar.gz"
   end
 
   on_linux do
     on_intel do
-      sha256 "bf7a99d20c6dab62226856a16bfa559cd655876d6dbf104d8f3221f57c42dbe6"
+      sha256 "a9bb2e1f200a3167a09934cf984d49326cc48b0772d4de6aff64037c27c21838"
       url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_linux_amd64.tar.gz"
     end
     on_arm do
-      sha256 "718aaa4b9a58f6c599bff1ed4831eb24a4febbcaa2dc0b5028b8d2b95c8771ec"
+      sha256 "e7d22a0d7867942b8d910f62bb3aa6abe6dbb542a1f81c1792ee3ca156f8868e"
       url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_linux_arm64.tar.gz"
     end
   end
