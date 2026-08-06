@@ -3,25 +3,34 @@ cask "aimonitor" do
   depends_on macos: :sonoma
   app "AIMonitor.app"
   postflight do
+    # Strip the Gatekeeper quarantine flag off the freshly-staged,
+    # unsigned .app so the GUI opens without the "damaged" /
+    # "unidentified developer" block. Homebrew re-stages a fresh,
+    # re-quarantined copy on every `brew upgrade`, so this must re-run
+    # each time — and it does (postflight runs on install AND upgrade).
+    system_command "/usr/bin/xattr",
+                   args: ["-dr", "com.apple.quarantine", "#{appdir}/AIMonitor.app"],
+                   must_succeed: false
+    # Register the daemon at login so the menu bar shows live data at once.
     system_command "#{staged_path}/aimonitor",
                    args: ["config", "set", "autostart", "true"],
                    must_succeed: false
   end
 
-  version "1.1.48"
+  version "1.1.49"
 
   on_macos do
-    sha256 "923ec219ad52a56934296b57ae23e47453db1afed42d83c30b2a6ce482289100"
+    sha256 "2460a59fecd8d2c6d2c5627e8cc86e495a6381f1c7f705dadc96fbed9e8416c7"
     url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_darwin_universal.tar.gz"
   end
 
   on_linux do
     on_intel do
-      sha256 "bb3e69591140c589ce4e79b1c5f9f96b3bca31f04dbed8e3cfbe354a075f559b"
+      sha256 "4e13fd9741e908494fc51277171dae341487f4c854d7ca713118ea939a70f07b"
       url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_linux_amd64.tar.gz"
     end
     on_arm do
-      sha256 "14cb44f9a718ed59ec2eca84ac23840ccc9f062698093f9d5b2f42f5429825ab"
+      sha256 "2760363df1dc20d4cc17a8ea70dbbdc1a07c28d03c00894777b35d0879f56543"
       url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_linux_arm64.tar.gz"
     end
   end
@@ -63,8 +72,9 @@ cask "aimonitor" do
 
       aimonitor config set autostart false
 
-    The menu bar app is unsigned — macOS Gatekeeper blocks the first
-    GUI launch. Clear it once:
+    The menu bar app is unsigned. Install auto-clears the Gatekeeper
+    quarantine flag; if macOS still blocks the launch ("damaged" or
+    "unidentified developer"), clear it manually:
 
       xattr -dr com.apple.quarantine /Applications/AIMonitor.app
 
