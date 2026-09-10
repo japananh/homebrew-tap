@@ -2,34 +2,37 @@
 cask "aimonitor" do
   depends_on macos: :sonoma
   app "AIMonitor.app"
-  postflight do
+  postflight_steps do
     # Strip the Gatekeeper quarantine flag off the freshly-staged,
     # unsigned .app so the GUI opens without the "damaged" /
     # "unidentified developer" block. Homebrew re-stages a fresh,
     # re-quarantined copy on every `brew upgrade`, so this must re-run
-    # each time — and it does (postflight runs on install AND upgrade).
-    system_command "/usr/bin/xattr",
-                   args: ["-dr", "com.apple.quarantine", "#{appdir}/AIMonitor.app"],
-                   must_succeed: false
+    # each time — and it does (the steps run on install AND upgrade).
+    run "/usr/bin/xattr",
+        args: ["-dr", "com.apple.quarantine", "{{appdir}}/AIMonitor.app"],
+        writable_paths: ["AIMonitor.app"],
+        writable_base: :appdir,
+        must_succeed: false
     # Register the daemon at login so the menu bar shows live data at once.
-    system_command "#{staged_path}/aimonitor",
-                   args: ["config", "set", "autostart", "true"],
-                   must_succeed: false
+    run "aimonitor",
+        base: :staged_path,
+        args: ["config", "set", "autostart", "true"],
+        must_succeed: false
   end
 
-  version "1.1.55"
+  version "1.1.56"
 
   on_macos do
-    sha256 "d4116296b51fed03d72a4e62a27c510391b288905b1fa23d47e05b48d49e726e"
+    sha256 "a1cf628fc387006c79a1ac58f97a38dc0275bce7760b3b8cd3b65b19d341935c"
     url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_darwin_universal.tar.gz"
   end
   on_linux do
     on_arm do
-      sha256 "149b4b1b09f350f9397cb9c9eeb5778a469f952ac8b4e71d70dcaee373f0755a"
+      sha256 "9c1edcf3b14f020e5f4bed7d52be8dd68489f346972f1e7945fa8c10736d968d"
       url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_linux_arm64.tar.gz"
     end
     on_intel do
-      sha256 "aafeca5e6592c069af7941f626d6b619478c8d4deb853e2e575b76c253acb495"
+      sha256 "50e7a928cf501520eb1d7f98ee1a738ae764e5923740eea39b3958942e8e822c"
       url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_linux_amd64.tar.gz"
     end
   end
