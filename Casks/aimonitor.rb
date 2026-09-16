@@ -3,36 +3,26 @@ cask "aimonitor" do
   depends_on macos: :sonoma
   app "AIMonitor.app"
   postflight_steps do
-    # Strip the Gatekeeper quarantine flag off the freshly-staged,
-    # unsigned .app so the GUI opens without the "damaged" /
-    # "unidentified developer" block. Homebrew re-stages a fresh,
-    # re-quarantined copy on every `brew upgrade`, so this must re-run
-    # each time — and it does (the steps run on install AND upgrade).
     run "/usr/bin/xattr",
         args: ["-dr", "com.apple.quarantine", "{{appdir}}/AIMonitor.app"],
         writable_paths: ["AIMonitor.app"],
         writable_base: :appdir,
         must_succeed: false
-    # Register the daemon at login so the menu bar shows live data at once.
-    run "aimonitor",
-        base: :staged_path,
-        args: ["config", "set", "autostart", "true"],
-        must_succeed: false
   end
 
-  version "1.1.59"
+  version "1.1.60"
 
   on_macos do
-    sha256 "e488a8518483bf000762a8458852c5909e7b1c0735463d7e9ed8cd054222f084"
+    sha256 "3be3aa2aa23cc8aa982161d9d3a92034d7afb5bbc26cf6c8665753932913771a"
     url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_darwin_universal.tar.gz"
   end
   on_linux do
     on_arm do
-      sha256 "9351bfc6f64dab77831188d99b57e1d9003a87dae49842fc72cbc293bd28fa38"
+      sha256 "439941fbbfb61aea47d44c76ed7e5324e9c8ca488eb12f6638041f1d73256692"
       url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_linux_arm64.tar.gz"
     end
     on_intel do
-      sha256 "73a72a4bf6d40f5a59c5c58ac5c2fedf46b13e0b7bdeb90d4afa7c104ecc380c"
+      sha256 "36ca17aef42f878da2665daa4ce724ca3edde7f10e8af941b965c6d14980c8a3"
       url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_linux_amd64.tar.gz"
     end
   end
@@ -69,8 +59,8 @@ cask "aimonitor" do
     ]
 
   caveats <<~EOS
-    The aimonitor daemon is registered to start at login during install,
-    so the menu bar shows live data right away. Opt out any time with:
+    Open AIMonitor once after installing — it registers the daemon to
+    start at login, so the menu bar shows live data. Opt out any time with:
 
       aimonitor config set autostart false
 
