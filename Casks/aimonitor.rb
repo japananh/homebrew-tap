@@ -8,21 +8,26 @@ cask "aimonitor" do
         writable_paths: ["AIMonitor.app"],
         writable_base: :appdir,
         must_succeed: false
+    run "/usr/bin/xattr",
+        args: ["-d", "com.apple.quarantine", "{{staged_path}}/aimonitor"],
+        writable_paths: ["aimonitor"],
+        writable_base: :staged_path,
+        must_succeed: false
   end
 
-  version "1.1.65"
+  version "1.1.66"
 
   on_macos do
-    sha256 "7b2af0255b12720a213227bb96138975765d80738986c1139abedc7ac7dd5afc"
+    sha256 "4c2ec39ec6373844e465a98ac5e60b1ccc01d380d0262a4d6979835083c70401"
     url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_darwin_universal.tar.gz"
   end
   on_linux do
     on_arm do
-      sha256 "d5d69d37b7431b41b4311eefcdb17865d58c30b9cdb0e1f2191658337b4e84f5"
+      sha256 "51c4ddd3fa1b8c570fd6798bf6e1bd29ba478cc7f0d0834721efe9e31f92937a"
       url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_linux_arm64.tar.gz"
     end
     on_intel do
-      sha256 "3aaa9329ceaea02c8aa83b160c43341d6342c5c356e4113cae416fe4240965a2"
+      sha256 "ca0a60ef6e806cba420c7fcf359fb9449342b8addfda088f5ae978c093d5b938"
       url "https://github.com/japananh/aimonitor/releases/download/v#{version}/aimonitor_#{version}_linux_amd64.tar.gz"
     end
   end
@@ -64,11 +69,12 @@ cask "aimonitor" do
 
       aimonitor config set autostart false
 
-    The menu bar app is unsigned. Install auto-clears the Gatekeeper
-    quarantine flag; if macOS still blocks the launch ("damaged" or
-    "unidentified developer"), clear it manually:
+    The menu bar app and the CLI are unsigned. Install auto-clears the
+    Gatekeeper quarantine flag on both; if macOS still blocks a launch
+    ("damaged", "unidentified developer" or "Not Opened"), clear it manually:
 
       xattr -dr com.apple.quarantine /Applications/AIMonitor.app
+      xattr -d com.apple.quarantine "$(brew --caskroom)/aimonitor/$(brew list --cask --versions aimonitor | awk '{print $2}')/aimonitor"
 
     For COMPLETE removal — including saved logins in your Keychain, the
     database, and config — run this BEFORE `brew uninstall`:
